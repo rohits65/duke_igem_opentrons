@@ -92,7 +92,7 @@ def run(protocol: protocol_api.ProtocolContext):
         tc_mod.close_lid()
 
     # TODO User input for start tip location
-    multichannel.pick_up_tip(location='A12')
+    multichannel.pick_up_tip()
     multichannel.drop_tip()
 
     pipette.pick_up_tip()
@@ -170,11 +170,15 @@ def run(protocol: protocol_api.ProtocolContext):
     pipette.drop_tip()
 
     # Mixing
-    multichannel.pick_up_tip(location='A11')
+    multichannel.pick_up_tip()
     multichannel.mix(5, 15, tc_plate['A1'])
+    multichannel.blow_out()
+    multichannel.touch_tip()
     multichannel.drop_tip()
 
     # Thermocycler
+    tc_mod.close_lid()
+    
     tc_mod.set_lid_temperature(temperature=105)
 
     tc_mod.set_block_temperature(temperature=94, hold_time_minutes=2)
@@ -189,6 +193,9 @@ def run(protocol: protocol_api.ProtocolContext):
     tc_mod.execute_profile(steps=profile, repetitions=2, block_max_volume=25)
 
     tc_mod.open_lid()
+
+    tc_mod.set_block_temperature(temperature=4)
+    tc_mod.deactivate_lid()
 
 
     # Transfer to well plate and add loading dye
@@ -212,8 +219,9 @@ def run(protocol: protocol_api.ProtocolContext):
 
     row = 'A'
     col = 1
-    pipette.pick_up_tip()
+    
     for run in encoded_input['mappings']:
+        pipette.pick_up_tip()
         if row > 'H':  # After row H, reset to A and move to the next column
             row = 'A'
             col += 1
@@ -222,9 +230,10 @@ def run(protocol: protocol_api.ProtocolContext):
         
         pipette.aspirate(5, tc_plate[row + str(col)])
         pipette.dispense(5, gel_plate[row + str(col)], rate=2)
+        pipette.blow_out()
         
         row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
-    pipette.drop_tip()
+        pipette.drop_tip()
 
    
 
