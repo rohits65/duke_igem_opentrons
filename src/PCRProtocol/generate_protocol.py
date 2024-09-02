@@ -294,22 +294,16 @@ class EditMappingApp:
             file_path = filedialog.askopenfilename(title=prompt, filetypes=[("CSV files", "*.csv")])
             return file_path
 
-        def get_protocol_name():
-            root = tk.Tk()
-            root.withdraw()  # Hide the root window
-            protocol_name = simpledialog.askstring("Protocol Name", "Enter the name of the protocol:")
-            return protocol_name
-
         # Get the file paths
         mappings_file_path = get_file_path("Select the mappings CSV file")
         plates_file_path = get_file_path("Select the plates CSV file")
 
         # Load the CSV files
         mappings_df = pd.read_csv(mappings_file_path)
+        mappings_df = mappings_df.fillna('')
+        
         plates_df = pd.read_csv(plates_file_path)
 
-        # Get protocol name
-        protocol_name = get_protocol_name()
 
         # Initialize the output dictionary
         encoded_input = {
@@ -351,20 +345,32 @@ class EditMappingApp:
         with open(pcr_file_path, 'r') as file:
             pcr_content = file.readlines()
 
-        # Replace the line starting with encoded_input=
+        # Replace the line starting with encoded_input = 
         new_pcr_content = []
         for line in pcr_content:
-            if line.strip().startswith('encoded_input = '):
+            if line.strip().startswith('encoded_input'):
                 new_pcr_content.append(f'encoded_input = {encoded_input_str}\n')
             else:
                 new_pcr_content.append(line)
 
-        # Write to the new file
-        new_file_path = f'{protocol_name}.py'
-        with open(new_file_path, 'w') as file:
-            file.writelines(new_pcr_content)
+        # Ask the user where to save the protocol
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".py",
+            filetypes=[("Python files", "*.py")],
+            title="Save Protocol File"
+        )
 
-        print(f"Updated file saved as {new_file_path}")
+        if not file_path:
+            return  # User cancelled the save dialog
+
+        try:
+            # Write to the selected file
+            with open(file_path, 'w') as file:
+                file.writelines(new_pcr_content)
+
+            messagebox.showinfo("Success", f"Updated file saved as {file_path}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save file: {e}")
 
 
 
