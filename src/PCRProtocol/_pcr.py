@@ -87,16 +87,7 @@ def run(protocol: protocol_api.ProtocolContext):
     tc_plate = tc_mod.load_labware(name="nest_96_wellplate_100ul_pcr_full_skirt")
 
 
-    # Close lid
-    if tc_mod.lid_position != 'closed':
-        tc_mod.close_lid()
 
-    # TODO User input for start tip location
-    multichannel.pick_up_tip()
-    multichannel.drop_tip()
-
-    pipette.pick_up_tip()
-    pipette.drop_tip()
 
     
     # 0. set block temp to 4? lid temp to 105?
@@ -109,50 +100,53 @@ def run(protocol: protocol_api.ProtocolContext):
 
     tc_mod.open_lid()
 
-    # Add water
-    row = 'D'
-    col = 6
-    pipette.pick_up_tip()
-    for run in encoded_input['mappings']:
-        if row > 'H':  # After row H, reset to A and move to the next column
-            row = 'A'
-            col += 1
-        if col > 12:
-            raise ValueError("Exceeded column limit.")
+    # # Add water
+    # row = 'D'
+    # col = 6
+    # pipette.pick_up_tip()
+    # for run in encoded_input['mappings']:
+    #     if row > 'H':  # After row H, reset to A and move to the next column
+    #         row = 'A'
+    #         col += 1
+    #     if col > 12:
+    #         raise ValueError("Exceeded column limit.")
         
-        pipette.aspirate(9, plate['D5'])
-        pipette.dispense(9, tc_plate[row + str(col)], rate=2)
+    #     pipette.aspirate(9, plate['D5'])
+    #     pipette.dispense(9, tc_plate[row + str(col)], rate=2)
         
-        row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
-    pipette.drop_tip()
+    #     row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
+    # pipette.drop_tip()
     
     
     
     # tc_mod.set_block_temperature(temperature=4)
 
     for plasmid in plasmids.keys():
-        pipette.pick_up_tip()
+       
         for location in plasmids[plasmid]:
+            pipette.pick_up_tip()
             pipette.aspirate(1, plate[plasmid_locations[plasmid]], rate=0.5)
-            pipette.dispense(1, tc_plate[location].top(3), rate=3)
+            pipette.dispense(1, tc_plate[location], rate=3)
             pipette.blow_out()
-        pipette.drop_tip()
+            pipette.drop_tip()
 
     for primer in forward_primers.keys():
-        pipette.pick_up_tip()
+        
         for location in forward_primers[primer]:
+            pipette.pick_up_tip()
             pipette.aspirate(1.25, plate[forward_primers_locations[primer]], rate=0.5)
-            pipette.dispense(1.25, tc_plate[location].top(3), rate=3)
+            pipette.dispense(1.25, tc_plate[location], rate=3)
             pipette.blow_out()
-        pipette.drop_tip()
+            pipette.drop_tip()
     
     for primer in reverse_primers.keys():
-        pipette.pick_up_tip()
+        
         for location in reverse_primers[primer]:
+            pipette.pick_up_tip()
             pipette.aspirate(1.25, plate[reverse_primers_locations[primer]], rate=0.5)
-            pipette.dispense(1.25, tc_plate[location].top(3), rate=3)
+            pipette.dispense(1.25, tc_plate[location], rate=3)
             pipette.blow_out()
-        pipette.drop_tip()
+            pipette.drop_tip()
     
 
     # Add mastermix
@@ -168,7 +162,7 @@ def run(protocol: protocol_api.ProtocolContext):
             raise ValueError("Exceeded column limit.")
         
         pipette.aspirate(12.5, plate['D6'])
-        pipette.dispense(12.5, tc_plate[row + str(col)].top(3), rate=2)
+        pipette.dispense(12.5, tc_plate[row + str(col)], rate=2)
         
         row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
         pipette.drop_tip()
@@ -177,7 +171,7 @@ def run(protocol: protocol_api.ProtocolContext):
 
     # Mixing
     multichannel.pick_up_tip()
-    multichannel.mix(3, 10, tc_plate['A1'].top(2))
+    multichannel.mix(3, 10, tc_plate['A1'])
 
     multichannel.touch_tip()
     multichannel.drop_tip()
@@ -192,17 +186,17 @@ def run(protocol: protocol_api.ProtocolContext):
     tc_mod.set_block_temperature(temperature=98, hold_time_seconds=30)
 
     profile = [
-        {"temperature":98, "hold_time_seconds":10},
-        {"temperature":58, "hold_time_seconds":30}, 
-        {"temperature":69, "hold_time_seconds":100},
-        {"temperature":72, "hold_time_seconds":120}, 
+        {"temperature":98, "hold_time_seconds":10}, 
+        {"temperature":69, "hold_time_seconds":30},
+        {"temperature":72, "hold_time_seconds":30}, 
     ]
 
     tc_mod.execute_profile(steps=profile, repetitions=30, block_max_volume=25)
+    tc_mod.set_block_temperature(temperature=4, hold_time_minutes=2)
 
     tc_mod.open_lid()
 
-    tc_mod.set_block_temperature(temperature=12)
+    tc_mod.set_block_temperature(temperature=4)
     tc_mod.deactivate_lid()
 
 
@@ -226,8 +220,8 @@ def run(protocol: protocol_api.ProtocolContext):
         row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
     pipette.drop_tip()
 
-    row = 'A'
-    col = 1
+    row = 'D'
+    col = 6
     
     for run in encoded_input['mappings']:
         pipette.pick_up_tip()
