@@ -1,14 +1,14 @@
 from opentrons import protocol_api
 
-
 metadata = {
     'protocolName': 'iGEM PCR Protocol',
     'author': 'rohit',
     'apiLevel': '2.13'
 }
 
+# encoded_input = {'plasmids': [['p_1', 'p_2', 'p_3', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', 'p_4', 'p_5'], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'forward_primers': [['f_1', 'f_2', 'f_3', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', 'f_4', 'f_5'], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'reverse_primers': [['r_1', 'r_2', 'r_3', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', 'r_4', 'r_5'], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'mappings': [[1, 'p_1', 'f_1', 'r_1', ''], [2, 'p_2', 'f_2', 'r_2', ''], [3, 'p_3', 'f_3', 'r_3', ''], [4, 'p_4', 'f_4', 'r_4', ''], [5, 'p_5', 'f_5', 'r_5', '']]}
 
-ecoded_input = 
+encoded_input = {'plasmids': [['p_1', 'p_2', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'forward_primers': [['', '', '', '', '', '', '', '', '', '', '', ''], ['f_1', 'f_2', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'reverse_primers': [['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['r_1', 'r_2', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'mappings': [[1, 'p_1', 'f_1', 'r_1', ''], [2, 'p_2', 'f_2', 'r_2', '']]}
 
 plasmid_locations = {}
 forward_primers_locations = {}
@@ -82,7 +82,7 @@ def run(protocol: protocol_api.ProtocolContext):
     pipette = protocol.load_instrument("p20_single_gen2", "right", tip_racks=[tips])
     multichannel = protocol.load_instrument("p20_multi_gen2", "left", tip_racks=[tips])
 
-    # Get thermocycler
+    # # Get thermocycler
     tc_mod = protocol.load_module(module_name="thermocyclerModuleV2")
     tc_plate = tc_mod.load_labware(name="nest_96_wellplate_100ul_pcr_full_skirt")
 
@@ -106,10 +106,29 @@ def run(protocol: protocol_api.ProtocolContext):
     # 2. 9 water to each
     # 3. ask user to put in master mix
     # 4. 12.5 master mix in each
-    
-    
+
     tc_mod.open_lid()
-    tc_mod.set_block_temperature(temperature=4)
+
+    # Add water
+    row = 'A'
+    col = 1
+    pipette.pick_up_tip()
+    for run in encoded_input['mappings']:
+        if row > 'H':  # After row H, reset to A and move to the next column
+            row = 'A'
+            col += 1
+        if col > 12:
+            raise ValueError("Exceeded column limit.")
+        
+        pipette.aspirate(9, plate['D5'])
+        pipette.dispense(9, tc_plate[row + str(col)], rate=2)
+        
+        row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
+    pipette.drop_tip()
+    
+    
+    
+    # tc_mod.set_block_temperature(temperature=4)
 
     for plasmid in plasmids.keys():
         pipette.pick_up_tip()
@@ -135,28 +154,13 @@ def run(protocol: protocol_api.ProtocolContext):
             pipette.blow_out()
         pipette.drop_tip()
     
-    # Add water
-    row = 'A'
-    col = 1
-    pipette.pick_up_tip()
-    for run in encoded_input['mappings']:
-        if row > 'H':  # After row H, reset to A and move to the next column
-            row = 'A'
-            col += 1
-        if col > 12:
-            raise ValueError("Exceeded column limit.")
-        
-        pipette.aspirate(9, plate['D5'])
-        pipette.dispense(9, tc_plate[row + str(col)], rate=2)
-        
-        row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
-    pipette.drop_tip()
 
     # Add mastermix
     row = 'A'
     col = 1
-    pipette.pick_up_tip()
+    
     for run in encoded_input['mappings']:
+        pipette.pick_up_tip()
         if row > 'H':  # After row H, reset to A and move to the next column
             row = 'A'
             col += 1
@@ -167,34 +171,38 @@ def run(protocol: protocol_api.ProtocolContext):
         pipette.dispense(12.5, tc_plate[row + str(col)], rate=2)
         
         row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
-    pipette.drop_tip()
+        pipette.drop_tip()
+
+    # tc_mod.set_block_temperature(temperature=37)
 
     # Mixing
     multichannel.pick_up_tip()
-    multichannel.mix(5, 15, tc_plate['A1'])
-    multichannel.blow_out()
+    multichannel.mix(3, 15, tc_plate['A1'])
+
     multichannel.touch_tip()
     multichannel.drop_tip()
+
+    
 
     # Thermocycler
     tc_mod.close_lid()
     
     tc_mod.set_lid_temperature(temperature=105)
 
-    tc_mod.set_block_temperature(temperature=94, hold_time_minutes=2)
+    tc_mod.set_block_temperature(temperature=98, hold_time_seconds=30)
 
     profile = [
-        {"temperature":94, "hold_time_seconds":25},
-        {"temperature":57, "hold_time_seconds":25}, 
-        {"temperature":72, "hold_time_seconds":60},
-        {"temperature":72, "hold_time_seconds":420}, 
+        {"temperature":98, "hold_time_seconds":10},
+        {"temperature":58, "hold_time_seconds":30}, 
+        {"temperature":69, "hold_time_seconds":100},
+        {"temperature":72, "hold_time_seconds":120}, 
     ]
 
-    tc_mod.execute_profile(steps=profile, repetitions=2, block_max_volume=25)
+    tc_mod.execute_profile(steps=profile, repetitions=30, block_max_volume=25)
 
     tc_mod.open_lid()
 
-    tc_mod.set_block_temperature(temperature=4)
+    tc_mod.set_block_temperature(temperature=12)
     tc_mod.deactivate_lid()
 
 
@@ -213,6 +221,7 @@ def run(protocol: protocol_api.ProtocolContext):
         pipette.aspirate(1, plate['D4'])
         pipette.dispense(1, gel_plate[row + str(col)], rate=3)
         pipette.blow_out()
+        pipette.touch_tip()
         
         row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
     pipette.drop_tip()
