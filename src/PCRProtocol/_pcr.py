@@ -31,8 +31,8 @@ def setup():
             if encoded_input['reverse_primers'][i][j] != '':
                 reverse_primers_locations[encoded_input['reverse_primers'][i][j]] = chr(ord('A')+i) + str(j+1)
 
-    row = 'A'
-    col = 1
+    row = 'D'
+    col = 6
 
     for run in encoded_input['mappings']:
         if row > 'H':  # After H, reset to A and move to the next column
@@ -110,8 +110,8 @@ def run(protocol: protocol_api.ProtocolContext):
     tc_mod.open_lid()
 
     # Add water
-    row = 'A'
-    col = 1
+    row = 'D'
+    col = 6
     pipette.pick_up_tip()
     for run in encoded_input['mappings']:
         if row > 'H':  # After row H, reset to A and move to the next column
@@ -133,31 +133,31 @@ def run(protocol: protocol_api.ProtocolContext):
     for plasmid in plasmids.keys():
         pipette.pick_up_tip()
         for location in plasmids[plasmid]:
-            pipette.aspirate(1, plate[plasmid_locations[plasmid]])
-            pipette.dispense(1, tc_plate[location], rate=3)
+            pipette.aspirate(1, plate[plasmid_locations[plasmid]], rate=0.5)
+            pipette.dispense(1, tc_plate[location].top(3), rate=3)
             pipette.blow_out()
         pipette.drop_tip()
 
     for primer in forward_primers.keys():
         pipette.pick_up_tip()
         for location in forward_primers[primer]:
-            pipette.aspirate(1.25, plate[forward_primers_locations[primer]])
-            pipette.dispense(1.25, tc_plate[location], rate=3)
+            pipette.aspirate(1.25, plate[forward_primers_locations[primer]], rate=0.5)
+            pipette.dispense(1.25, tc_plate[location].top(3), rate=3)
             pipette.blow_out()
         pipette.drop_tip()
     
     for primer in reverse_primers.keys():
         pipette.pick_up_tip()
         for location in reverse_primers[primer]:
-            pipette.aspirate(1.25, plate[reverse_primers_locations[primer]])
-            pipette.dispense(1.25, tc_plate[location], rate=3)
+            pipette.aspirate(1.25, plate[reverse_primers_locations[primer]], rate=0.5)
+            pipette.dispense(1.25, tc_plate[location].top(3), rate=3)
             pipette.blow_out()
         pipette.drop_tip()
     
 
     # Add mastermix
-    row = 'A'
-    col = 1
+    row = 'D'
+    col = 6
     
     for run in encoded_input['mappings']:
         pipette.pick_up_tip()
@@ -168,7 +168,7 @@ def run(protocol: protocol_api.ProtocolContext):
             raise ValueError("Exceeded column limit.")
         
         pipette.aspirate(12.5, plate['D6'])
-        pipette.dispense(12.5, tc_plate[row + str(col)], rate=2)
+        pipette.dispense(12.5, tc_plate[row + str(col)].top(3), rate=2)
         
         row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
         pipette.drop_tip()
@@ -177,7 +177,7 @@ def run(protocol: protocol_api.ProtocolContext):
 
     # Mixing
     multichannel.pick_up_tip()
-    multichannel.mix(3, 15, tc_plate['A1'])
+    multichannel.mix(3, 10, tc_plate['A1'].top(2))
 
     multichannel.touch_tip()
     multichannel.drop_tip()
@@ -208,8 +208,8 @@ def run(protocol: protocol_api.ProtocolContext):
 
     # Transfer to well plate and add loading dye
     # Add loading dye
-    row = 'A'
-    col = 1
+    row = 'D'
+    col = 6
     pipette.pick_up_tip()
     for run in encoded_input['mappings']:
         if row > 'H':  # After row H, reset to A and move to the next column
