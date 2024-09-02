@@ -1,11 +1,5 @@
 from opentrons import protocol_api
 
-'''
-TODO excel sheet needs update
-TODO generate_protocol.py needs update 
-TODO use multichannel to move liquid from pcr to gel plate
-'''
-
 
 metadata = {
     'protocolName': 'iGEM PCR Protocol',
