@@ -1,0 +1,25 @@
+# Python-specific ignores
+*.pyc
+__pycache__/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# IDE specific ignores (e.g., VSCode, PyCharm)
+.vscode/
+.idea/
+
+# Environment variables
+.env
+
+# Build directories
+build/
+dist/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+opentrons/
+
+# Temp files
+~$*
