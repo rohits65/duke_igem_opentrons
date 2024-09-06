@@ -8,7 +8,7 @@ metadata = {
 
 # encoded_input = {'plasmids': [['p_1', 'p_2', 'p_3', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', 'p_4', 'p_5'], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'forward_primers': [['f_1', 'f_2', 'f_3', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', 'f_4', 'f_5'], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'reverse_primers': [['r_1', 'r_2', 'r_3', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', 'r_4', 'r_5'], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'mappings': [[1, 'p_1', 'f_1', 'r_1', ''], [2, 'p_2', 'f_2', 'r_2', ''], [3, 'p_3', 'f_3', 'r_3', ''], [4, 'p_4', 'f_4', 'r_4', ''], [5, 'p_5', 'f_5', 'r_5', '']]}
 
-encoded_input = {'plasmids': [['p_1', 'p_2', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'forward_primers': [['', '', '', '', '', '', '', '', '', '', '', ''], ['f_1', 'f_2', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'reverse_primers': [['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['r_1', 'r_2', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'mappings': [[1, 'p_1', 'f_1', 'r_1', ''], [2, 'p_2', 'f_2', 'r_2', '']]}
+encoded_input = {'plasmids': [['p_1', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'forward_primers': [['', '', '', '', '', '', '', '', '', '', '', ''], ['f_1', 'f_2', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'reverse_primers': [['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['r_1', 'r_2', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', ''], ['', '', '', '', '', '', '', '', '', '', '', '']], 'mappings': [[1, 'p_1', 'f_1', 'r_1', '']]}
 
 plasmid_locations = {}
 forward_primers_locations = {}
@@ -31,8 +31,8 @@ def setup():
             if encoded_input['reverse_primers'][i][j] != '':
                 reverse_primers_locations[encoded_input['reverse_primers'][i][j]] = chr(ord('A')+i) + str(j+1)
 
-    row = 'D'
-    col = 6
+    row = 'A'
+    col = 1
 
     for run in encoded_input['mappings']:
         if row > 'H':  # After H, reset to A and move to the next column
@@ -100,22 +100,22 @@ def run(protocol: protocol_api.ProtocolContext):
 
     tc_mod.open_lid()
 
-    # # Add water
-    # row = 'D'
-    # col = 6
-    # pipette.pick_up_tip()
-    # for run in encoded_input['mappings']:
-    #     if row > 'H':  # After row H, reset to A and move to the next column
-    #         row = 'A'
-    #         col += 1
-    #     if col > 12:
-    #         raise ValueError("Exceeded column limit.")
+    # Add water
+    row = 'D'
+    col = 6
+    pipette.pick_up_tip()
+    for run in encoded_input['mappings']:
+        if row > 'H':  # After row H, reset to A and move to the next column
+            row = 'A'
+            col += 1
+        if col > 12:
+            raise ValueError("Exceeded column limit.")
         
-    #     pipette.aspirate(9, plate['D5'])
-    #     pipette.dispense(9, tc_plate[row + str(col)], rate=2)
+        pipette.aspirate(9, plate['D5'])
+        pipette.dispense(9, tc_plate[row + str(col)], rate=2)
         
-    #     row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
-    # pipette.drop_tip()
+        row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
+    pipette.drop_tip()
     
     
     
@@ -150,8 +150,8 @@ def run(protocol: protocol_api.ProtocolContext):
     
 
     # Add mastermix
-    row = 'D'
-    col = 6
+    row = 'A'
+    col = 1
     
     for run in encoded_input['mappings']:
         pipette.pick_up_tip()
@@ -170,11 +170,11 @@ def run(protocol: protocol_api.ProtocolContext):
     # tc_mod.set_block_temperature(temperature=37)
 
     # Mixing
-    multichannel.pick_up_tip()
-    multichannel.mix(3, 10, tc_plate['A1'])
+    pipette.pick_up_tip()
+    pipette.mix(3, 10, tc_plate['A1'])
 
-    multichannel.touch_tip()
-    multichannel.drop_tip()
+    pipette.touch_tip()
+    pipette.drop_tip()
 
     
 
@@ -191,8 +191,8 @@ def run(protocol: protocol_api.ProtocolContext):
         {"temperature":72, "hold_time_seconds":30}, 
     ]
 
-    tc_mod.execute_profile(steps=profile, repetitions=30, block_max_volume=25)
-    tc_mod.set_block_temperature(temperature=4, hold_time_minutes=2)
+    tc_mod.execute_profile(steps=profile, repetitions=1, block_max_volume=25)
+    tc_mod.set_block_temperature(temperature=72, hold_time_minutes=2)
 
     tc_mod.open_lid()
 
@@ -202,8 +202,8 @@ def run(protocol: protocol_api.ProtocolContext):
 
     # Transfer to well plate and add loading dye
     # Add loading dye
-    row = 'D'
-    col = 6
+    row = 'A'
+    col = 1
     pipette.pick_up_tip()
     for run in encoded_input['mappings']:
         if row > 'H':  # After row H, reset to A and move to the next column
@@ -220,8 +220,8 @@ def run(protocol: protocol_api.ProtocolContext):
         row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
     pipette.drop_tip()
 
-    row = 'D'
-    col = 6
+    row = 'A'
+    col = 1
     
     for run in encoded_input['mappings']:
         pipette.pick_up_tip()
