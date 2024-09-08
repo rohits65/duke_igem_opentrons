@@ -16,9 +16,9 @@ def run(protocol: protocol_api.ProtocolContext):
 
     pipette = protocol.load_instrument("p20_single_gen2", "right", tip_racks=[tips])
 
-    row = 'A'
-    col = 6
-    for i in range(2,41):
+    row = 'B'
+    col = 2
+    for i in range(0,4):
         if row > 'H':  # After H, reset to A and move to the next column
             row = 'A'
             col += 1
@@ -26,8 +26,8 @@ def run(protocol: protocol_api.ProtocolContext):
             raise ValueError("Exceeded column limit.")
         
         pipette.pick_up_tip()
-        pipette.aspirate(i/2, reservoir['A3'], rate=0.5)
-        pipette.dispense(i/2, plate[row+str(col)], rate=3)
+        pipette.aspirate(20, reservoir['A3'], rate=0.5)
+        pipette.dispense(20, plate[row+str(col)], rate=3)
         pipette.blow_out()
         pipette.drop_tip()
         
