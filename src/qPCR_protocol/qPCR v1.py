@@ -33,9 +33,6 @@ def run(protocol: protocol_api.ProtocolContext):
     template_plate = protocol.load_labware(
         "nest_96_wellplate_100ul_pcr_full_skirt", location="2"
     )
-
-    tc_mod = protocol.load_module(module_name="thermocyclerModuleV2")
-    plate = tc_mod.load_labware(name="nest_96_wellplate_100ul_pcr_full_skirt")
     
     # pipettes
     p20 = protocol.load_instrument(

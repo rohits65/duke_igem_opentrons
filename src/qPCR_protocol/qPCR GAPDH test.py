@@ -1,8 +1,8 @@
 from opentrons import protocol_api
 
 #Paste your layout lists here: 
-MM_wells = [[0, 1, 2, 8, 9, 10, 16, 17, 18, 24, 25, 26, 32, 33, 34, 40, 41, 42, 48, 49, 50, 56, 57, 58, 64, 65, 66], [3, 4, 5, 11, 12, 13, 19, 20, 21, 27, 28, 29, 35, 36, 37, 43, 44, 45, 51, 52, 53, 59, 60, 61, 67, 68, 69]]
-template_wells = [[0, 1, 2, 3, 4, 5], [8, 9, 10, 11, 12, 13], [16, 17, 18, 19, 20, 21], [24, 25, 26, 27, 28, 29], [32, 33, 34, 35, 36, 37], [40, 41, 42, 43, 44, 45], [48, 49, 50, 51, 52, 53], [56, 57, 58, 59, 60, 61], [64, 65, 66, 67, 68, 69]]
+MM_wells = [[0, 8, 16, 24, 32, 40, 48, 56, 64]]
+template_wells = [[0], [8], [16], [24], [32], [40], [48], [56], [64]]
 
 # metadata
 metadata = {
@@ -33,9 +33,6 @@ def run(protocol: protocol_api.ProtocolContext):
     template_plate = protocol.load_labware(
         "nest_96_wellplate_100ul_pcr_full_skirt", location="2"
     )
-
-    tc_mod = protocol.load_module(module_name="thermocyclerModuleV2")
-    plate = tc_mod.load_labware(name="nest_96_wellplate_100ul_pcr_full_skirt")
     
     # pipettes
     p20 = protocol.load_instrument(
