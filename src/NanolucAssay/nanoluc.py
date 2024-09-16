@@ -7,13 +7,13 @@ metadata = {
 }
 
 
-cell_row = 'D'
+cell_row = 'A'
 cell_start_col = 1
-cell_end_col = 5
+cell_end_col = 6
 
-assay_row = 'G'
+assay_row = 'A'
 assay_start_col = 1
-assay_end_col = 5
+assay_end_col = 6
 
 
 
@@ -30,20 +30,20 @@ def run(protocol: protocol_api.ProtocolContext):
     pipette_20 = protocol.load_instrument("p20_single_gen2", "right", tip_racks=[tips_20])
 
     
-    # # Add media
-    # pipette_300.pick_up_tip()
+    # Add media
+    pipette_300.pick_up_tip()
     
-    # for col in range(cell_start_col, cell_end_col+1):
+    for col in range(cell_start_col, cell_end_col+1):
         
-    #     pipette_300.aspirate(80, assay_tubes['A1'])
-    #     pipette_300.dispense(80, assay_plate[assay_row+str(col)], rate=2.0)
-    #     pipette_300.blow_out()
+        pipette_300.aspirate(30, assay_tubes['A1'])
+        pipette_300.dispense(30, assay_plate[assay_row+str(col)], rate=2.0)
+        pipette_300.blow_out()
 
-    #     pipette_300.aspirate(80, assay_tubes['A1'])
-    #     pipette_300.dispense(80, assay_plate[chr(ord(assay_row) + 1)+str(col)], rate=2.0)
-    #     pipette_300.blow_out()
+        pipette_300.aspirate(30, assay_tubes['A1'])
+        pipette_300.dispense(30, assay_plate[chr(ord(assay_row) + 1)+str(col)], rate=2.0)
+        pipette_300.blow_out()
 
-    # pipette_300.drop_tip()
+    pipette_300.drop_tip()
 
 
     # Add cell plate sample
@@ -51,14 +51,14 @@ def run(protocol: protocol_api.ProtocolContext):
 
     for col in range(cell_start_col, cell_end_col+1):
         pipette_20.pick_up_tip()
-        pipette_20.aspirate(20, cell_plate[cell_row+str(col)], rate=0.5)
-        pipette_20.dispense(20, assay_plate[assay_row+str(col)], rate=3.0)
+        pipette_20.aspirate(10, cell_plate[cell_row+str(col)], rate=0.5)
+        pipette_20.dispense(10, assay_plate[assay_row+str(col)], rate=3.0)
         pipette_20.blow_out()
         pipette_20.drop_tip()
 
         pipette_20.pick_up_tip()
-        pipette_20.aspirate(20, cell_plate[cell_row+str(col)], rate=0.5)
-        pipette_20.dispense(20, assay_plate[chr(ord(assay_row) + 1)+str(col)], rate=3.0)
+        pipette_20.aspirate(10, cell_plate[cell_row+str(col)], rate=0.5)
+        pipette_20.dispense(10, assay_plate[chr(ord(assay_row) + 1)+str(col)], rate=3.0)
         pipette_20.blow_out()
         pipette_20.drop_tip()
     
@@ -67,12 +67,12 @@ def run(protocol: protocol_api.ProtocolContext):
     pipette_300.well_bottom_clearance.dispense = 10
     pipette_300.pick_up_tip()
     for col in range(cell_start_col, cell_end_col+1):
-        pipette_300.aspirate(25, assay_tubes['A2'])
-        pipette_300.dispense(25, assay_plate[assay_row+str(col)], rate=3.0)
+        pipette_300.aspirate(10, assay_tubes['A2'])
+        pipette_300.dispense(10, assay_plate[assay_row+str(col)], rate=3.0)
         pipette_300.blow_out()
 
-        pipette_300.aspirate(25, assay_tubes['A2'])
-        pipette_300.dispense(25, assay_plate[chr(ord(assay_row) + 1)+str(col)], rate=3.0)
+        pipette_300.aspirate(10, assay_tubes['A2'])
+        pipette_300.dispense(10, assay_plate[chr(ord(assay_row) + 1)+str(col)], rate=3.0)
         pipette_300.blow_out()
     
     pipette_300.drop_tip()
