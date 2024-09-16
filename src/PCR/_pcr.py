@@ -31,8 +31,8 @@ def setup():
             if encoded_input['reverse_primers'][i][j] != '':
                 reverse_primers_locations[encoded_input['reverse_primers'][i][j]] = chr(ord('A')+i) + str(j+1)
 
-    row = 'A'
-    col = 1
+    row = 'D'
+    col = 4
 
     for run in encoded_input['mappings']:
         if row > 'H':  # After H, reset to A and move to the next column
@@ -71,7 +71,7 @@ def run(protocol: protocol_api.ProtocolContext):
     # reverse_plate = protocol.load_labware("nest_96_wellplate_200ul_flat", 3)
 
     plate = protocol.load_labware("opentrons_24_tuberack_eppendorf_1.5ml_safelock_snapcap", 3)
-    gel_plate = protocol.load_labware("nest_96_wellplate_200ul_flat", 1)
+    # gel_plate = protocol.load_labware("nest_96_wellplate_200ul_flat", 1)
 
     # master_mix_tube = protocol.load_labware("opentrons_15_tuberack_falcon_15ml_conical", 4)
 
@@ -80,7 +80,7 @@ def run(protocol: protocol_api.ProtocolContext):
     # End remove
 
     pipette = protocol.load_instrument("p20_single_gen2", "right", tip_racks=[tips])
-    multichannel = protocol.load_instrument("p20_multi_gen2", "left", tip_racks=[tips])
+    # multichannel = protocol.load_instrument("p20_multi_gen2", "left", tip_racks=[tips])
 
     # # Get thermocycler
     tc_mod = protocol.load_module(module_name="thermocyclerModuleV2")
@@ -102,7 +102,7 @@ def run(protocol: protocol_api.ProtocolContext):
 
     # Add water
     row = 'D'
-    col = 6
+    col = 4
     pipette.pick_up_tip()
     for run in encoded_input['mappings']:
         if row > 'H':  # After row H, reset to A and move to the next column
@@ -150,8 +150,8 @@ def run(protocol: protocol_api.ProtocolContext):
     
 
     # Add mastermix
-    row = 'A'
-    col = 1
+    row = 'D'
+    col = 4
     
     for run in encoded_input['mappings']:
         pipette.pick_up_tip()
@@ -178,65 +178,65 @@ def run(protocol: protocol_api.ProtocolContext):
 
     
 
-    # Thermocycler
-    tc_mod.close_lid()
+    # # Thermocycler
+    # tc_mod.close_lid()
     
-    tc_mod.set_lid_temperature(temperature=105)
+    # tc_mod.set_lid_temperature(temperature=105)
 
-    tc_mod.set_block_temperature(temperature=98, hold_time_seconds=30)
+    # tc_mod.set_block_temperature(temperature=98, hold_time_seconds=30)
 
-    profile = [
-        {"temperature":98, "hold_time_seconds":10}, 
-        {"temperature":69, "hold_time_seconds":30},
-        {"temperature":72, "hold_time_seconds":30}, 
-    ]
+    # profile = [
+    #     {"temperature":98, "hold_time_seconds":10}, 
+    #     {"temperature":72, "hold_time_seconds":30},
+    #     {"temperature":72, "hold_time_seconds":30}, 
+    # ]
 
-    tc_mod.execute_profile(steps=profile, repetitions=1, block_max_volume=25)
-    tc_mod.set_block_temperature(temperature=72, hold_time_minutes=2)
+    # tc_mod.execute_profile(steps=profile, repetitions=30, block_max_volume=25)
+    # tc_mod.set_block_temperature(temperature=72, hold_time_minutes=2)
 
-    tc_mod.open_lid()
+    # tc_mod.open_lid()
 
-    tc_mod.set_block_temperature(temperature=4)
-    tc_mod.deactivate_lid()
+    # tc_mod.set_block_temperature(temperature=4)
+    # tc_mod.deactivate_lid()
 
 
-    # Transfer to well plate and add loading dye
-    # Add loading dye
-    row = 'A'
-    col = 1
-    pipette.pick_up_tip()
-    for run in encoded_input['mappings']:
-        if row > 'H':  # After row H, reset to A and move to the next column
-            row = 'A'
-            col += 1
-        if col > 12:
-            raise ValueError("Exceeded column limit.")
+    # # Transfer to well plate and add loading dye
+    # # Add loading dye
+    # row = 'A'
+    # col = 1
+    # pipette.pick_up_tip()
+    # for run in encoded_input['mappings']:
+    #     if row > 'H':  # After row H, reset to A and move to the next column
+    #         row = 'A'
+    #         col += 1
+    #     if col > 12:
+    #         raise ValueError("Exceeded column limit.")
         
-        pipette.aspirate(1, plate['D4'])
-        pipette.dispense(1, gel_plate[row + str(col)], rate=3)
-        pipette.blow_out()
-        pipette.touch_tip()
+    #     pipette.aspirate(1, plate['D4'])
+    #     pipette.dispense(1, gel_plate[row + str(col)], rate=3)
+    #     pipette.blow_out()
+    #     pipette.touch_tip()
         
-        row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
-    pipette.drop_tip()
+    #     row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
+    # pipette.drop_tip()
 
-    row = 'A'
-    col = 1
+    # row = 'A'
+    # col = 1
     
-    for run in encoded_input['mappings']:
-        pipette.pick_up_tip()
-        if row > 'H':  # After row H, reset to A and move to the next column
-            row = 'A'
-            col += 1
-        if col > 12:
-            raise ValueError("Exceeded column limit.")
+    # for run in encoded_input['mappings']:
+    #     pipette.pick_up_tip()
+    #     if row > 'H':  # After row H, reset to A and move to the next column
+    #         row = 'A'
+    #         col += 1
+    #     if col > 12:
+    #         raise ValueError("Exceeded column limit.")
         
-        pipette.aspirate(5, tc_plate[row + str(col)])
-        pipette.dispense(5, gel_plate[row + str(col)], rate=2)
-        pipette.blow_out()
+    #     pipette.aspirate(5, tc_plate[row + str(col)])
+    #     pipette.dispense(5, gel_plate[row + str(col)], rate=2)
+    #     pipette.blow_out()
         
-        row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
-        pipette.drop_tip()
+    #     row = chr(ord(row) + 1)  # Move to the next row (A -> B -> C -> D)
+    #     pipette.drop_tip()
 
    
 
