@@ -6,16 +6,13 @@ metadata = {
     'apiLevel': '2.13'
 }
 
-
-cell_row = 'A'
+cell_row = 'D'
 cell_start_col = 1
 cell_end_col = 6
 
-assay_row = 'A'
+assay_row = 'G'
 assay_start_col = 1
 assay_end_col = 6
-
-
 
 def run(protocol: protocol_api.ProtocolContext):
     tips_300 = protocol.load_labware("opentrons_96_filtertiprack_200ul", 5) # TODO check if right
@@ -35,12 +32,12 @@ def run(protocol: protocol_api.ProtocolContext):
     
     for col in range(cell_start_col, cell_end_col+1):
         
-        pipette_300.aspirate(30, assay_tubes['A1'])
-        pipette_300.dispense(30, assay_plate[assay_row+str(col)], rate=2.0)
+        pipette_300.aspirate(80, assay_tubes['A1'])
+        pipette_300.dispense(80, assay_plate[assay_row+str(col)], rate=2.0)
         pipette_300.blow_out()
 
-        pipette_300.aspirate(30, assay_tubes['A1'])
-        pipette_300.dispense(30, assay_plate[chr(ord(assay_row) + 1)+str(col)], rate=2.0)
+        pipette_300.aspirate(80, assay_tubes['A1'])
+        pipette_300.dispense(80, assay_plate[chr(ord(assay_row) + 1)+str(col)], rate=2.0)
         pipette_300.blow_out()
 
     pipette_300.drop_tip()
@@ -67,12 +64,12 @@ def run(protocol: protocol_api.ProtocolContext):
     pipette_300.well_bottom_clearance.dispense = 10
     pipette_300.pick_up_tip()
     for col in range(cell_start_col, cell_end_col+1):
-        pipette_300.aspirate(10, assay_tubes['A2'])
-        pipette_300.dispense(10, assay_plate[assay_row+str(col)], rate=3.0)
+        pipette_300.aspirate(25, assay_tubes['A2'])
+        pipette_300.dispense(25, assay_plate[assay_row+str(col)], rate=3.0)
         pipette_300.blow_out()
 
-        pipette_300.aspirate(10, assay_tubes['A2'])
-        pipette_300.dispense(10, assay_plate[chr(ord(assay_row) + 1)+str(col)], rate=3.0)
+        pipette_300.aspirate(25, assay_tubes['A2'])
+        pipette_300.dispense(25, assay_plate[chr(ord(assay_row) + 1)+str(col)], rate=3.0)
         pipette_300.blow_out()
     
     pipette_300.drop_tip()

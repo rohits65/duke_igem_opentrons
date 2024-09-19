@@ -40,21 +40,23 @@ def run(protocol: protocol_api.ProtocolContext):
 
 
     # Add cell plate sample
-    pipette_20.well_bottom_clearance.aspirate = 3.5
+    # pipette_300.well_bottom_clearance.aspirate = 1.5
 
-    for row in range(0, 4):
-        pipette_20.pick_up_tip()
-        pipette_20.aspirate(5, cell_plate[chr(ord('A') + row) +str(column)], rate=0.5)
-        pipette_20.dispense(5, assay_plate[chr(ord('A') + 2*row) +str(column)], rate=3.0)
-        pipette_20.blow_out()
-        pipette_20.drop_tip()
+    for column in range(7,8):
 
-        pipette_20.pick_up_tip()
-        pipette_20.aspirate(5, cell_plate[chr(ord('A') + row) +str(column)], rate=0.5)
-        pipette_20.dispense(5, assay_plate[chr(ord('A') + 2*row + 1) +str(column)], rate=3.0)
-        pipette_20.blow_out()
-        pipette_20.drop_tip()
-    
+        for row in range(0, 4):
+            pipette_300.pick_up_tip()
+            pipette_300.aspirate(200, cell_plate[chr(ord('A') + row) +str(column)], rate=0.5)
+            # pipette_20.dispense(5, assay_plate[chr(ord('A') + 2*row) +str(column)], rate=3.0)
+            # pipette_20.blow_out()
+            pipette_300.drop_tip()
+
+            # pipette_300.pick_up_tip()
+            # pipette_300.aspirate(200, assay_tubes[chr(ord('A') + row) +str(column)], rate=0.5)
+            # pipette_300.dispense(200, cell_plate[chr(ord('A') + row) +str(column)], rate=0.5)
+            # pipette_300.blow_out()
+            # pipette_300.drop_tip()
+        
 
     # # Add reagent
     # pipette_300.well_bottom_clearance.dispense = 10
