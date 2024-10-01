@@ -23,3 +23,6 @@ opentrons/
 
 # Temp files
 ~$*
+
+# Ignore playground
+playground/
